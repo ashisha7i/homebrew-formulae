@@ -1,3 +1,6 @@
+#!/bin/bash
+# set -e
+
 # Define variables for ANSI Colors
 ANSI_NONE='\033[0m'
 ANSI_BLACK='\033[0;30m'
@@ -17,5 +20,5 @@ elif [ "$1" = "on" ]; then
 elif [ "$1" = "off" ]; then
     launchctl unload /Library/LaunchAgents/com.paloaltonetworks.gp.pangp*
 else
-    echo -e "Unknown Option!\n ${ANSI_CYAN}Usage:${NC} ${ANSI_GREEN}gpvpn${NC} ${ANSI_YELLOW}on${NC}|${ANSI_YELLOW}off${NC}\n"
+    echo "\n ${ANSI_RED}Unknown Option!\n\n ${ANSI_CYAN}Usage:${NC} ${ANSI_GREEN}gpvpn${NC} ${ANSI_YELLOW}on${NC}|${ANSI_YELLOW}off${NC}\n"
 fi
