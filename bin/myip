@@ -1,0 +1,12 @@
+#!/bin/bash
+# set -e
+
+public_ip=$(curl -s ifconfig.me)
+local_ip=$(ipconfig getifaddr en0)
+echo "Your IP Address(es):
+
+    local  : $local_ip
+    public : $public_ip
+    "
+    
+
