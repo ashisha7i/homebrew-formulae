@@ -1,0 +1,23 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Create Tag
+
+on:
+  push:
+    branches:
+      - main
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: Klemensas/action-autotag@stable
+      with:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        tag_prefix: "v"
+    
