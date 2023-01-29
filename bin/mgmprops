@@ -1,0 +1,28 @@
+#!/bin/bash
+
+function showUsage {
+    echo "    Usage: mgmprops qa|prod" 
+    exit
+}
+
+if [ "$#" -ne 1 ]; then
+    echo "Incorrect usage."
+    echo " "
+    showUsage
+fi
+url=""
+
+if [ "$1" = "qa" ]; then
+    url="https://origin-aws-qa1-content.mgmresorts.com/content-api/v3/en/property/detail/all"
+elif [ "$1" = "prod" ]; then
+    url="https://content.mgmresorts.com/content-api/v3/en/property/detail/all"
+else
+    echo "Incorrect parameter"
+    echo " "
+    showUsage
+fi
+
+curl -s $url | jq -r '"  ID#NAME#REGION#TIMEZONE", "  ----#------#--------#----------",(.[] | "  \(.id)#\(.name)#\(.regionName)#\(.timezone)")' | column -ts "#" | sed -e "s/null/--  /g"
+
+echo "
+  Fetched from: $url"
