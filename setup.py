@@ -11,7 +11,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'jc=jc.cli:main'
+            'getquote=getquote:main'
         ]
     },
 )
