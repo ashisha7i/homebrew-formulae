@@ -9,5 +9,9 @@ setup(
     install_requires=[
         'requests'
     ],
-    py_modules=['getquote'],
+    entry_points={
+        'console_scripts': [
+            'jc=jc.cli:main'
+        ]
+    },
 )
