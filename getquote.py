@@ -19,5 +19,3 @@ def request_quote():
 
 def main():
     request_quote()
-
-main()
