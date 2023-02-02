@@ -5,6 +5,7 @@ FOOTER="Last Updated on 01-FEB-2023 (As per Ewa Berning's mail dated 15-DEC-2022
 # Define variables for ANSI Colors
 ANSI_NONE='\033[0m'
 ANSI_BLACK='\033[0;30m'
+ANSI_BLACK_1='\033[1;30m'
 ANSI_RED='\033[0;31m'
 ANSI_GREEN='\033[0;32m'
 ANSI_ORANGE='\033[0;33m'
@@ -37,7 +38,7 @@ function showAllHolidays {
     do
         keyDate=`strptime -i "%Y-%m-%d" $i`
         if datetest today --gt $keyDate; then
-            echo -e "   ${ANSI_BLACK}${holidays[$i]}${NC}"
+            echo -e "   ${ANSI_BLACK_1}${holidays[$i]}${NC}"
         else
             echo "   ${holidays[$i]}"
         fi
