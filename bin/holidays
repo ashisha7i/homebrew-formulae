@@ -1,0 +1,87 @@
+#!/bin/zsh
+
+FOOTER="Last Updated on 01-FEB-2023 (As per Ewa Berning's mail dated 15-DEC-2022)"
+
+# Define variables for ANSI Colors
+ANSI_NONE='\033[0m'
+ANSI_BLACK='\033[0;30m'
+ANSI_RED='\033[0;31m'
+ANSI_GREEN='\033[0;32m'
+ANSI_ORANGE='\033[0;33m'
+ANSI_BLUE='\033[0;34m'
+ANSI_YELLOW='\033[1;33m'
+ANSI_WHITE='\033[1;37m'
+ANSI_CYAN='\033[1;36m'
+NC='\033[0m'
+
+
+# Declaring an array (non-associative) to maintain the order of dates
+declare -a holidayOrder
+
+# Declaring an associative array to hold the holidays
+declare -A holidays
+holidays[2023-01-02]="02-JAN-2023 (Monday)   : New Year's Day (Observed)"; holidayOrder+=( 2023-01-02 );
+holidays[2023-01-16]="16-JAN-2023 (Monday)   : Martin Luther King Day"; holidayOrder+=( 2023-01-16 );
+holidays[2023-02-20]="20-FEB-2023 (Monday)   : Presidents Day"; holidayOrder+=( 2023-02-20 );
+holidays[2023-05-29]="29-MAY-2023 (Monday)   : Memorial Day"; holidayOrder+=( 2023-05-29 );
+holidays[2023-06-04]="04-JUL-2023 (Tuesday)  : Independence Day"; holidayOrder+=( 2023-06-04 );
+holidays[2023-09-04]="04-SEP-2023 (Monday)   : Labor Day"; holidayOrder+=( 2023-09-04 );
+holidays[2023-11-23]="23-NOV-2023 (Thursday) : Thanksgiving"; holidayOrder+=( 2023-11-23 );
+holidays[2023-11-24]="24-NOV-2023 (Friday)   : Family Day"; holidayOrder+=( 2023-11-24 );
+holidays[2023-12-25]="25-DEC-2023 (Monday)   : Christmas"; holidayOrder+=( 2023-12-25 );
+holidays[2024-01-01]="01-JAN-2024 (Monday)   : New Year's Day 2024"; holidayOrder+=( 2024-01-01 );
+
+function showAllHolidays {
+    echo " "
+    for i in "${holidayOrder[@]}"
+    do
+        keyDate=`strptime -i "%Y-%m-%d" $i`
+        if datetest today --gt $keyDate; then
+            echo -e "   ${ANSI_BLACK}${holidays[$i]}${NC}"
+        else
+            echo "   ${holidays[$i]}"
+        fi
+    done
+    echo " "
+    echo "   ** $FOOTER"
+}
+
+
+## -- START : Enhancements for future release 
+# Converting the passed parameter to upper case
+#selection=${(U)1}
+
+
+# Helper Functions
+#function showUsage {
+#    echo "
+#    Usage:
+#        
+#        holidays <opt>
+#        
+#        all  - List ALL Holidays (default)
+#        next - List NEXT Holiday
+#    "
+#    exit
+#}
+#
+# Check input and print messages
+#if [[ "$#" -eq 0 ]]; then
+#    selection=ALL
+#elif [ "$#" -gt 1 ]; then
+#    showUsage
+#elif [[ "$selection" != "ALL" && "$selection" != "NEXT" ]]; then
+#    showUsage
+#else
+#    selection="${(U)selection}"
+#fi
+#
+# Processing
+#if [[ "$selection" = "ALL" ]]; then
+#    showAllHolidays
+#else
+#    echo "WIP"
+#fi
+## -- END : Enhancements for future release 
+
+showAllHolidays
