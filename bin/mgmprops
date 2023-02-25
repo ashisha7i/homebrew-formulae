@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function showUsage {
-    echo "    Usage: mgmprops qa|preprod|prod" 
+    echo "    Usage: mgmprops qa4|uat|preprod|prod" 
     exit
 }
 
@@ -12,16 +12,13 @@ if [ "$#" -ne 1 ]; then
 fi
 url=""
 
-if [ "$1" = "qa" ]; then
-    url="https://origin-aws-qa1-content.mgmresorts.com/content-api/v3/en/property/detail/all"
-elif [ "$1" = "preprod" ]; then
-    url="https://preprod-content.mgmresorts.com/content-api/v3/en/property/detail/all"
+
+if [[ "$1" != "qa4" && "$1" != "uat" && "$1" != "preprod" && "$1" != "prod" ]]; then
+    showUsage
 elif [ "$1" = "prod" ]; then
     url="https://content.mgmresorts.com/content-api/v3/en/property/detail/all"
-else
-    echo "Incorrect parameter"
-    echo " "
-    showUsage
+else 
+    url="https://$1-content.devtest.vegas/content-api/v3/en/property/detail/all"
 fi
 
 curl -s $url | jq -r '"  ID#NAME#REGION#TIMEZONE", "  ----#------#--------#----------",(.[] | "  \(.id)#\(.name)#\(.regionName)#\(.timezone)")' | column -ts "#" | sed -e "s/null/--  /g"
