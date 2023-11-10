@@ -1,6 +1,8 @@
 #!/bin/zsh
 
-FOOTER="Last Updated on 01-FEB-2023 (As per Ewa Berning's mail dated 15-DEC-2022)"
+FOOTER="Last Updated on 09-NOV-2023 (As per the email from 'TDD Senior Leadership' dated 09-NOV-2023)"
+
+
 
 # Define variables for ANSI Colors
 ANSI_NONE='\033[0m'
@@ -17,30 +19,63 @@ NC='\033[0m'
 
 
 # Declaring an array (non-associative) to maintain the order of dates
-declare -a holidayOrder
+declare -a holidayOrder2023
+declare -a holidayOrder2024
 
 # Declaring an associative array to hold the holidays
-declare -A holidays
-holidays[2023-01-02]="02-JAN-2023 (Monday)   : New Year's Day (Observed)"; holidayOrder+=( 2023-01-02 );
-holidays[2023-01-16]="16-JAN-2023 (Monday)   : Martin Luther King Day"; holidayOrder+=( 2023-01-16 );
-holidays[2023-02-20]="20-FEB-2023 (Monday)   : Presidents Day"; holidayOrder+=( 2023-02-20 );
-holidays[2023-05-29]="29-MAY-2023 (Monday)   : Memorial Day"; holidayOrder+=( 2023-05-29 );
-holidays[2023-06-04]="04-JUL-2023 (Tuesday)  : Independence Day"; holidayOrder+=( 2023-06-04 );
-holidays[2023-09-04]="04-SEP-2023 (Monday)   : Labor Day"; holidayOrder+=( 2023-09-04 );
-holidays[2023-11-23]="23-NOV-2023 (Thursday) : Thanksgiving"; holidayOrder+=( 2023-11-23 );
-holidays[2023-11-24]="24-NOV-2023 (Friday)   : Family Day"; holidayOrder+=( 2023-11-24 );
-holidays[2023-12-25]="25-DEC-2023 (Monday)   : Christmas"; holidayOrder+=( 2023-12-25 );
-holidays[2024-01-01]="01-JAN-2024 (Monday)   : New Year's Day 2024"; holidayOrder+=( 2024-01-01 );
+declare -A holidays2023
+declare -A holidays2024
+holidays2023[2023-01-02]="02-JAN-2023 (Monday)     : New Year's Day (Observed)"; holidayOrder2023+=( 2023-01-02 );
+holidays2023[2023-01-16]="16-JAN-2023 (Monday)     : Martin Luther King Day"; holidayOrder2023+=( 2023-01-16 );
+holidays2023[2023-02-20]="20-FEB-2023 (Monday)     : Presidents Day"; holidayOrder2023+=( 2023-02-20 );
+holidays2023[2023-05-29]="29-MAY-2023 (Monday)     : Memorial Day"; holidayOrder2023+=( 2023-05-29 );
+holidays2023[2023-06-04]="04-JUL-2023 (Tuesday)    : Independence Day"; holidayOrder2023+=( 2023-06-04 );
+holidays2023[2023-09-04]="04-SEP-2023 (Monday)     : Labor Day"; holidayOrder2023+=( 2023-09-04 );
+holidays2023[2023-11-23]="23-NOV-2023 (Thursday)   : Thanksgiving"; holidayOrder2023+=( 2023-11-23 );
+holidays2023[2023-11-24]="24-NOV-2023 (Friday)     : Family Day"; holidayOrder2023+=( 2023-11-24 );
+holidays2023[2023-12-25]="25-DEC-2023 (Monday)     : Christmas"; holidayOrder2023+=( 2023-12-25 );
+holidays2023[2024-01-01]="01-JAN-2024 (Monday)     : New Year's Day 2024"; holidayOrder2023+=( 2024-01-01 );
+
+
+holidays2024[2024-01-01]="01-JAN-2024 (Monday)     : New Year's Day"; holidayOrder2024+=( 2024-01-01 );
+holidays2024[2024-01-15]="15-JAN-2024 (Monday)     : Martin Luther King Day"; holidayOrder2024+=( 2024-01-15 );
+holidays2024[2024-02-19]="19-FEB-2024 (Monday)     : Presidents Day"; holidayOrder2024+=( 2024-02-19 );
+holidays2024[2024-05-27]="27-MAY-2024 (Monday)     : Memorial Day"; holidayOrder2024+=( 2024-05-27 );
+holidays2024[2024-06-19]="19-JUN-2024 (Wednesday)  : Juneteenth"; holidayOrder2024+=( 2024-06-19 );
+holidays2024[2024-07-04]="04-JUL-2024 (Thursday)   : Independence Day"; holidayOrder2024+=( 2024-07-04 );
+holidays2024[2024-09-02]="02-SEP-2024 (Monday)     : Labor Day"; holidayOrder2024+=( 2024-09-02 );
+holidays2024[2024-11-11]="11-NOV-2024 (Monday)     : Veterans Day"; holidayOrder2024+=( 2024-11-11 );
+holidays2024[2024-11-28]="28-NOV-2024 (Thursday)   : Thanksgiving"; holidayOrder2024+=( 2024-11-28 );
+holidays2024[2024-11-29]="29-NOV-2024 (Friday)     : Family Day"; holidayOrder2024+=( 2024-11-29 );
+holidays2024[2024-12-25]="25-DEC-2024 (Wednesday)  : Christmas"; holidayOrder2024+=( 2024-12-25 );
+holidays2024[2025-01-01]="01-JAN-2025 (Wednesday)  : New Year's Day 2024"; holidayOrder2024+=( 2025-01-01 );
+
+
 
 function showAllHolidays {
     echo " "
-    for i in "${holidayOrder[@]}"
+    for i in "${holidayOrder2023[@]}"
     do
         keyDate=`strptime -i "%Y-%m-%d" $i`
         if datetest today --gt $keyDate; then
-            echo -e "   ${ANSI_BLACK_1}${holidays[$i]}${NC}"
+            if [[ "$1" == "ALL" ]]; then
+                echo -e "   ${ANSI_BLACK_1}${holidays2023[$i]}${NC}"
+            fi
         else
-            echo "   ${holidays[$i]}"
+            echo "   ${holidays2023[$i]}"
+        fi
+    done
+    echo " "
+    
+    for i in "${holidayOrder2024[@]}"
+    do
+        keyDate=`strptime -i "%Y-%m-%d" $i`
+        if datetest today --gt $keyDate; then
+            if [[ "$1" == "ALL" ]]; then
+                echo -e "   ${ANSI_BLACK_1}${holidays2024[$i]}${NC} $1"
+            fi
+        else
+            echo "   ${holidays2024[$i]}"
         fi
     done
     echo " "
@@ -85,4 +120,4 @@ function showAllHolidays {
 #fi
 ## -- END : Enhancements for future release 
 
-showAllHolidays
+showAllHolidays $1
