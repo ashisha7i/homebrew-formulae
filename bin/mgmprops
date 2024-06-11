@@ -21,7 +21,7 @@ else
     url="https://$1-content.devtest.vegas/content-api/v3/en/property/detail/all"
 fi
 
-curl -s $url | jq -r '"  ID#NAME#REGION#TIMEZONE", "  ----#------#--------#----------",(.[] | "  \(.id)#\(.name)#\(.regionName)#\(.timezone)")' | column -ts "#" | sed -e "s/null/--  /g"
+curl -s $url | jq -r '"  ID#OPERA#NAME#REGION#TIMEZONE", "  ---#------#-----#-------#---------",(.[] | "  \(.id)#\(.operaPropertyCode)#\(.name)#\(.regionName)#\(.timezone)")' | column -ts "#" | sed -e "s/null/--  /g"
 
 echo "
   Fetched from: $url"
