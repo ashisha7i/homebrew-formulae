@@ -1,27 +1,79 @@
 #!/bin/bash
 
-function showUsage {
-    echo "    Usage: mgmprops qa4|uat|preprod|prod" 
-    exit
-}
-
-if [ "$#" -ne 1 ]; then
+function showUsage() {
+    exit_status=$1
     echo "Incorrect usage."
     echo " "
-    showUsage
+    echo "    Usage: mgmprops qa4|uat|preprod|prod [--s ID|OPERA|NAME|REGION|TIMEZONE]" 
+    exit $exit_status
+}
+
+# Check if correct number of arguments are provided
+if [ "$#" -lt 1 ] || [ "$#" -gt 3 ]; then
+    showUsage 1
 fi
+
 url=""
 
+envName=$1
 
-if [[ "$1" != "qa4" && "$1" != "uat" && "$1" != "preprod" && "$1" != "prod" ]]; then
-    showUsage
+# Handle sort option and value below
+option=""
+value=""
+
+if [ "$#" -ge 2 ]; then
+    option=$2
+fi
+
+if [ "$#" -ge 3 ]; then
+    value=$3
+fi
+
+if [ "$#" -ge 2 ]; then
+    # Validate 'option' and 'value'
+    if [ -n "$option" ] && [ "$option" != "--s" ]; then
+        showUsage 2
+    fi
+
+
+    if [[ "$value" != "ID" && "$value" != "OPERA" && "$value" != "NAME" && "$value" != "REGION" && "$value" != "TIMEZONE" ]]; then
+        showUsage 3
+    fi
+fi
+
+if [[ "$envName" != "qa4" && "$envName" != "uat" && "$envName" != "preprod" && "$envName" != "prod" ]]; then
+    showUsage 4
 elif [ "$1" = "prod" ]; then
     url="https://content.mgmresorts.com/content-api/v3/en/property/detail/all"
 else 
-    url="https://$1-content.devtest.vegas/content-api/v3/en/property/detail/all"
+    url="https://$envName-content.devtest.vegas/content-api/v3/en/property/detail/all"
 fi
 
-curl -s $url | jq -r '"  ID#OPERA#NAME#REGION#TIMEZONE", "  ---#------#-----#-------#---------",(.[] | "  \(.id)#\(.operaPropertyCode)#\(.name)#\(.regionName)#\(.timezone)")' | column -ts "#" | sed -e "s/null/--  /g"
+# Display list based on the options selected
+# Perform action based on the provided parameters
+if [ -z "$option" ]; then
+    curl -s $url | jq -r '"  ID#OPERA#NAME#REGION#TIMEZONE", "  ---#------#-----#-------#---------",(.[] | "  \(.id)#\(.operaPropertyCode)#\(.name)#\(.regionName)#\(.timezone)")' | column -ts "#" | sed -e "s/null/--  /g"
+else
+    case $value in
+        ID)
+            curl -s $url | jq -r '"  ID#OPERA#NAME#REGION#TIMEZONE", "  ---#------#-----#-------#---------",(sort_by(.id) | .[] | "  \(.id)#\(.operaPropertyCode)#\(.name)#\(.regionName)#\(.timezone)")' | column -ts "#" | sed -e "s/null/--  /g"
+            ;;
+        OPERA)
+            curl -s $url | jq -r '"  ID#OPERA#NAME#REGION#TIMEZONE", "  ---#------#-----#-------#---------",(sort_by(.operaPropertyCode) | .[] | "  \(.id)#\(.operaPropertyCode)#\(.name)#\(.regionName)#\(.timezone)")' | column -ts "#" | sed -e "s/null/--  /g"
+            ;;
+        NAME)
+            curl -s $url | jq -r '"  ID#OPERA#NAME#REGION#TIMEZONE", "  ---#------#-----#-------#---------",(sort_by(.name) | .[] | "  \(.id)#\(.operaPropertyCode)#\(.name)#\(.regionName)#\(.timezone)")' | column -ts "#" | sed -e "s/null/--  /g"
+            ;;
+        REGION)
+            curl -s $url | jq -r '"  ID#OPERA#NAME#REGION#TIMEZONE", "  ---#------#-----#-------#---------",(sort_by(.regionName) | .[] | "  \(.id)#\(.operaPropertyCode)#\(.name)#\(.regionName)#\(.timezone)")' | column -ts "#" | sed -e "s/null/--  /g"
+            ;;
+        TIMEZONE)
+            curl -s $url | jq -r '"  ID#OPERA#NAME#REGION#TIMEZONE", "  ---#------#-----#-------#---------",(sort_by(.timezone) | .[] | "  \(.id)#\(.operaPropertyCode)#\(.name)#\(.regionName)#\(.timezone)")' | column -ts "#" | sed -e "s/null/--  /g"
+            ;;
+    esac
+fi            
+
+# curl -s $url | jq -r '"  ID#OPERA#NAME#REGION#TIMEZONE", "  ---#------#-----#-------#---------",(.[] | "  \(.id)#\(.operaPropertyCode)#\(.name)#\(.regionName)#\(.timezone)")' | column -ts "#" | sed -e "s/null/--  /g"
 
 echo "
   Fetched from: $url"
