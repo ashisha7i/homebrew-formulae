@@ -1,0 +1,91 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ZIP_URL="https://github.com/awslabs/aidlc-workflows/archive/refs/heads/main.zip"
+
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/aidlc-workflows"
+ZIP_PATH="$CACHE_DIR/main.zip"
+EXTRACT_DIR="$CACHE_DIR/main"
+EXTRACT_ROOT_GLOB="$EXTRACT_DIR"/aidlc-workflows-*/
+
+FORCE=0
+REFRESH=0
+
+usage() {
+cat <<EOF
+aidlc-setup: install AI-DLC rules for Cline in the current directory
+
+Creates:
+  .clinerules/core-workflow.md
+  .aidlc-rule-details/*
+
+Options:
+  --refresh    re-download latest rules
+  --force      overwrite existing files
+  --help       show help
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --force) FORCE=1 ;;
+    --refresh) REFRESH=1 ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "Unknown argument: $1"; usage; exit 1 ;;
+  esac
+  shift
+done
+
+mkdir -p "$CACHE_DIR"
+
+download_if_needed() {
+  if [[ "$REFRESH" -eq 1 || ! -f "$ZIP_PATH" ]]; then
+    echo "Downloading aidlc workflows..."
+    curl -fsSL "$REPO_ZIP_URL" -o "$ZIP_PATH"
+  fi
+}
+
+extract_if_needed() {
+  if [[ "$REFRESH" -eq 1 || ! -d "$EXTRACT_DIR" ]]; then
+    echo "Extracting rules..."
+    rm -rf "$EXTRACT_DIR"
+    mkdir -p "$EXTRACT_DIR"
+    unzip -q "$ZIP_PATH" -d "$EXTRACT_DIR"
+  fi
+}
+
+download_if_needed
+extract_if_needed
+
+ROOT="$(ls -d $EXTRACT_ROOT_GLOB 2>/dev/null | head -n 1 || true)"
+[[ -n "$ROOT" ]] || { echo "ERROR: extraction failed"; exit 1; }
+
+RULES_ROOT="$ROOT/aidlc-rules"
+RULES_DIR="$RULES_ROOT/aws-aidlc-rules"
+DETAILS_DIR="$RULES_ROOT/aws-aidlc-rule-details"
+CORE="$RULES_DIR/core-workflow.md"
+
+[[ -f "$CORE" ]] || { echo "ERROR: core-workflow.md missing"; exit 1; }
+
+mkdir -p .clinerules
+mkdir -p .aidlc-rule-details
+
+if [[ -f ".clinerules/core-workflow.md" && "$FORCE" -ne 1 ]]; then
+  echo "ERROR: .clinerules/core-workflow.md exists (use --force)"
+  exit 1
+fi
+
+if compgen -G ".aidlc-rule-details/*" > /dev/null && [[ "$FORCE" -ne 1 ]]; then
+  echo "ERROR: .aidlc-rule-details not empty (use --force)"
+  exit 1
+fi
+
+cp -f "$CORE" .clinerules/core-workflow.md
+
+rm -rf .aidlc-rule-details/*
+cp -R "$DETAILS_DIR/"* .aidlc-rule-details/
+
+echo
+echo "AI-DLC Cline rules installed:"
+echo "  .clinerules/core-workflow.md"
+echo "  .aidlc-rule-details/*"
