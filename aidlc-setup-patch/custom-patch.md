@@ -9,5 +9,12 @@
 - `AI-DLC analysis`
 - `AI-DLC workflow`
 - `with AI-DLC`
+- `using AIDLC`
+- `use AIDLC`
+- `follow AIDLC`
+- `via AIDLC`
+- `AIDLC analysis`
+- `AIDLC workflow`
+- `with AIDLC`
 
 **This rule has NO exceptions.** Even for read-only tasks like code investigation, reverse engineering, or documentation requests — if the user explicitly invokes AIDLC by name, the full workflow MUST execute.
